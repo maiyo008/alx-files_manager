@@ -1,4 +1,5 @@
 const { MongoClient } = require('mongodb');
+const { ObjectId } = require('mongodb');
 
 class DBClient {
   constructor() {
@@ -29,6 +30,38 @@ class DBClient {
     const filesCollection = this.db.collection('files');
     const count = await filesCollection.countDocuments();
     return count;
+  }
+
+  async createUser(userData) {
+    try {
+      const usersCollection = this.db.collection('users');
+      const result = await usersCollection.insertOne(userData);
+      return result.ops[0];
+    } catch (error) {
+      throw new Error(`Error creating user: ${error.message}`);
+    }
+  }
+
+  async getUser(query) {
+    try {
+      const usersCollection = this.db.collection('users');
+      const user = await usersCollection.findOne(query);
+      return user;
+    } catch (error) {
+      throw new Error(`Error fetching user: ${error.message}`);
+    }
+  }
+
+  async getUserById(id) {
+    const usersCollection = this.db.collection('users');
+    const user = await usersCollection.findOne({ _id: ObjectId(id) });
+    return user;
+  }
+
+  async getUserByEmailAndPassword(email, password) {
+    const usersCollection = this.db.collection('users');
+    const user = await usersCollection.findOne({ email, password });
+    return user;
   }
 }
 
