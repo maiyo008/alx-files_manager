@@ -3,6 +3,7 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const dbClient = require('../utils/db');
 const { ObjectId } = require('mongodb');
+const redisClient = require('../utils/redis');
 
 
 class FilesController {
@@ -64,7 +65,7 @@ class FilesController {
         };
 
         //Add the new file to the DB
-        const fileCollection = dbClient.db.collection('files');
+        const filesCollection = dbClient.db.collection('files');
         const result = await filesCollection.insertOne(newFile);
 
         return res.status(201).json(result.ops[0]);
